@@ -15,6 +15,7 @@ Puhelin: 0401234567
 Sähköposti: anna.virtanen@example.com
 
 """
+from datetime import datetime, timedelta
 
 def main():
     # Määritellään tiedoston nimi suoraan koodissa
@@ -24,9 +25,39 @@ def main():
     with open(varaukset, "r", encoding="utf-8") as f:
         varaus = f.read().strip()
 
+    # Pilkotaan varaus listaksi
     varaus = varaus.split('|')
+
+    # Sijoitetaan varauksen kentät omiin oikeaa tyyppiä oleviin muuttujiinsa
+    varausnumero = int(varaus[0])
+    varaaja = varaus[1]
+    paiva = datetime.strptime(varaus[2], "%Y-%m-%d").date()
+    aika = datetime.strptime(varaus[3], "%H:%M").time()
+    aloitus = datetime.combine(paiva, aika) # Muodostetaan kelvollinen aikaleima, helpottaa operointia
+    kesto = int(varaus[4])    # Eikö kesto voi olla muutakuin tasatunteja 
+    loppuu = aloitus + timedelta(hours = kesto) # Lasketaan varauksen päättymisaika
+    tuntihinta = float(varaus[5])
+    kokonaishinta = kesto * tuntihinta
+    maksettu = bool(varaus[6])
+    kohde = varaus[7]
+    puhelin = varaus[8]
+    email = varaus[9]
+
+    # Tulostetaan tiedot konsoliin
+    print(f"Varausnumero: {varausnumero}")
+    print(f"Varaaja: {varaaja}")
+    print(f"Päivämäärä: {aloitus:%d.%m.%Y}")
+    print(f"Aloitusaika: {aloitus:%H.%M}")
+    print(f"Tuntimäärä: {kesto}")
+    print(f"Päättymisaika: {loppuu:%H.%M}")
+    print(f"Tuntihinta: {tuntihinta:.2f} €".replace('.', ','))
+    print(f"Kokonaishinta: {kokonaishinta:.2f} €".replace('.', ','))
+    print(f"Maksettu: {'Kyllä' if maksettu else 'Ei'}")
+    print(f"Kohde: {kohde}")
+    print(f"Puhelin: {puhelin}")
+    print(f"Sähköposti: {email}")
     # Tulostetaan varaus konsoliin
-    print(varaus)
+    #print(varaus)
 
     # Kokeile näitä
     #print(varaus.split('|'))
