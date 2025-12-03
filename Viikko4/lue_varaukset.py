@@ -74,10 +74,35 @@ def main():
             print(f"- {varaus[1]}, {varaus[9]}, {varaus[4]:%d.%m.%Y} klo {varaus[5]:%H.%M}")
     
     # Tulostetaan toisena vähintään kolme tuntia kestävät varaukset
-    print("2) Pitkät varaukset (≥ 3 h)")
+    print("\n2) Pitkät varaukset (≥ 3 h)")
     for varaus in varaukset[1:]:
         if varaus[6] >= 3:
             print(f"- {varaus[1]}, {varaus[4]:%d.%m.%Y} klo {varaus[5]:%H.%M}, kesto {varaus[6]} h, {varaus[9]},")
+    
+    # Tulostetaan varausten vahvistusstatus
+    print("\n3) Varausten vahvistusstatus")
+    for varaus in varaukset[1:]:
+        print(f"{varaus[1]} → {'Vahvistettu' if varaus[8] else 'Ei vahvistettu'}")
+    
+    # Tulostetaan yhteenveto vahvistuksista
+    vahvistetut = 0
+    vahvistamattomat = 0
+    print("\n4) Yhteenveto vahvistuksista")
+    for varaus in varaukset[1:]:
+        if varaus[8]:
+            vahvistetut += 1
+        else:
+            vahvistamattomat += 1
+    print(f"- Vahvistettuja varauksia: {vahvistetut} kpl")
+    print(f"- Ei-vahvistettuja varauksia: {vahvistamattomat} kpl")
+
+    # Tulostetaan vahvistettujen kokonaistulos
+    kokonaistulos = 0
+    print("\n5) Vahvistettujen varausten kokonaistulot")
+    for varaus in varaukset[1:]:
+        if varaus[8]:
+            kokonaistulos += varaus[6] * varaus[7]
+    print(f"Vahvistettujen varausten kokonaistulot: {kokonaistulos:.2f} €".replace(".", ","))
 
 if __name__ == "__main__":
     main()
