@@ -58,6 +58,7 @@ def main():
     # Osa B vaatii muutoksia -> Esim. tulostuksien (print-funktio) muuttamisen.
     # Kutsutaan funkioita hae_varaukset, joka palauttaa kaikki varaukset oikeilla tietotyypeillä
     varaukset = hae_varaukset("varaukset.txt")
+    """
     print(" | ".join(varaukset[0]))
     print("------------------------------------------------------------------------")
     for varaus in varaukset[1:]:
@@ -65,6 +66,18 @@ def main():
         tietotyypit = [type(x).__name__ for x in varaus]
         print(" | ".join(tietotyypit))
         print("------------------------------------------------------------------------")
+    """
+    # Tulostetaan ensin vahvistetut varaukset
+    print("1) Vahvistetut varaukset")
+    for varaus in varaukset[1:]:
+        if varaus[8]:
+            print(f"- {varaus[1]}, {varaus[9]}, {varaus[4]:%d.%m.%Y} klo {varaus[5]:%H.%M}")
+    
+    # Tulostetaan toisena vähintään kolme tuntia kestävät varaukset
+    print("2) Pitkät varaukset (≥ 3 h)")
+    for varaus in varaukset[1:]:
+        if varaus[6] >= 3:
+            print(f"- {varaus[1]}, {varaus[4]:%d.%m.%Y} klo {varaus[5]:%H.%M}, kesto {varaus[6]} h, {varaus[9]},")
 
 if __name__ == "__main__":
     main()
