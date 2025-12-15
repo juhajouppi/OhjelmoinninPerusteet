@@ -70,11 +70,13 @@ def laske_paivasummat(taulukko: list) -> list:
             0,
             0,
             0
-
         ])
-        print(f"{(paiva1 + timedelta(days = i)):%d.%m.%Y}")
-    #for rivi in taulukko:
-     #   if 
+    # Käydään taulukko läpi rivi riviltä ja summataan vaihekohtaiset tiedot kunkin päivän osalta    
+    for rivi in taulukko:
+        paiva = int((rivi[0] - paiva1).days) # päiväindeksi
+        # summataan rivin tiedot oikeiin alkioihin
+        for i in range(1, 7):
+            summataulukko[paiva][i] += rivi[i] 
     return summataulukko
 
 def hae_viikonpaiva(paivamaara: date) -> str:
@@ -100,19 +102,40 @@ def hae_viikonpaiva(paivamaara: date) -> str:
     }
     return viikonpaiva.get(paivanumero, "Mahdotontai")
 
+def muotoile_tuloste(taulukko: list) -> str:
+    """
+    Muotoilee parametrinä annettavan taulukon haluttuun tulostusmuotoon ja palauttaa sen tekstinä .
+    
+    Parametrit:
+     taulukko (list): taulukkomuotoinen data, päivä- ja vaihekohtaiset kulutukset ja tuotot
+
+    Palauttaa:
+     (str): taulukon tiedot muotoiltuna tulosteeksi.
+    """
+    # Lisätään ensin otsikkotiedot
+    tuloste =  "Päivä       Pvm            Kulutus [kWh]                 Tuotanto [kWh]\n"
+    tuloste += "            pv.kk.vvvv     v1      v2      v3            v1      v2      v3\n"
+    tuloste += "------------------------------------------------------------------------------"
+    for rivi in taulukko:
+        tuloste += f"\n{hae_viikonpaiva(rivi[0]):<12}"
+        tuloste += f"{rivi[0]:%d.%m.%Y}    "
+        for i in range(1, 7):
+            luku = f"{(rivi[i]/1000):.2f}"         # muunnetaan Wh-> kWh, luvuksi ja pyöristetään
+            luku = luku.replace(".", ",")          # korvataan desimaalipiste -pilkulla
+            luku = f"{luku:>6}"
+            if i == 3:                             # huommioidaan pidempi väli asettelussa tuotannon ja kulutuksen osalta
+                tuloste += f"{luku:<14}"
+            else:
+                tuloste += f"{luku:<8}"
+    return tuloste
 
 def main():
     """
     Ohjelman pääfunktio: lukee datan tiedostosta, käsittelee ja tulostaa raportin.
     """
-    csv_sisalto = lue_csv("viikko42.csv")
-    print(f"Eka rivi\n{csv_sisalto[0]}")
-    viikonpaiva = hae_viikonpaiva(date.today())
-    print(f"\nTänään on {viikonpaiva}")
-    data = pilko_ja_muunna(csv_sisalto)
-    print(f"\n{data[0]}")
-    # print(f"\n{data[0][0].date():%d.%m.%Y}")
-    koonti = laske_paivasummat(data)
+    
+    print("Viikon 42 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n")
+    print(muotoile_tuloste(laske_paivasummat(pilko_ja_muunna(lue_csv("viikko42.csv")))))
 
 
 if __name__ == "__main__":
