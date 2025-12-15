@@ -126,7 +126,7 @@ def muotoile_tuloste(taulukko: list) -> str:
             luku = f"{(rivi[i]/1000):.2f}"         # muunnetaan Wh-> kWh, luvuksi ja pyöristetään
             luku = luku.replace(".", ",")          # korvataan desimaalipiste -pilkulla
             luku = f"{luku:>6}"
-            if i == 3:                             # huommioidaan pidempi väli asettelussa tuotannon ja kulutuksen osalta
+            if i == 3:                             # huomioidaan pidempi väli asettelussa tuotannon ja kulutuksen osalta
                 tuloste += f"{luku:<14}"
             else:
                 tuloste += f"{luku:<8}"
@@ -145,9 +145,7 @@ def main():
     viikko43 = "\nViikon 43 sähkönkulutus ja -tuotanto (kWh, vaiheittain)\n"
     viikko43 += muotoile_tuloste(laske_paivasummat(pilko_ja_muunna(lue_csv("viikko43.csv"))))
     viikko43 += "\n------------------------------------------------------------------------------\n"
-    #print(viikko41)
-    #print(viikko42)
-    #print(viikko43)
+    
     tiedoston_nimi = "yhteenveto.txt"
     with open(tiedoston_nimi, "w", encoding="utf-8") as f:
         f.write(viikko41)
