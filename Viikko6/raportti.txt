@@ -1,0 +1,6 @@
+-----------------------------------------------------
+Raportti kuukaudelta: Elokuu
+Sähkön kulutus:  219,41 kWh
+Sähkön tuotanto: 508,02 kWh
+Jakson keskilämpötila: 1,5e+01 °C
+-----------------------------------------------------

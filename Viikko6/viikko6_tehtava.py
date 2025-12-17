@@ -57,7 +57,7 @@ def nayta_valikko(taso: int) -> int:
         print("Valitse raporttityyppi:")
         print("1) Päiväkohtainen yhteenveto aikaväliltä")
         print("2) Kuukausikohtainen yhteenveto yhdelle kuukaudelle")
-        print("3) Vuoden 2025 kokonaisyhteenveto")
+        print("3) Koko vuoden yhteenveto")
         print("4) Lopeta ohjelma")
         valintoja = 4
     elif taso == 2:
@@ -70,7 +70,7 @@ def nayta_valikko(taso: int) -> int:
         return -1        # Palautetaan -1 merkiksi virheellisestä parametrista
     syote_ok = False
     while not syote_ok:
-        syote = input("Anna valinta:")
+        syote = input("Anna valinta: ")
         try:
             syote = int(syote)
         except:
@@ -117,8 +117,8 @@ def paivakohtainen_raportti(taulukko: list) -> str:
      (str): laskettu yhteenveto raporttimuodossa.
     """
     while True:
-        alku_pvm = pyyda_pvm("Anna alkupäivä (pv.kk.vvvv)")
-        loppu_pvm = pyyda_pvm("Anna loppupäivä (pv.kk.vvvv)")
+        alku_pvm = pyyda_pvm("Anna alkupäivä (pv.kk.vvvv)\n")
+        loppu_pvm = pyyda_pvm("Anna loppupäivä (pv.kk.vvvv)\n")
         if alku_pvm > loppu_pvm:
             print("Alkupäivän pitäisi olla ennen loppupäivää. Yritä uudelleen, ole hyvä!")
             continue
@@ -142,9 +142,99 @@ def paivakohtainen_raportti(taulukko: list) -> str:
     raportti += f"Sähkön kulutus:  {kulutus} kWh\n"
     raportti += f"Sähkön tuotanto: {tuotanto} kWh\n"
     raportti += f"Jakson keskilämpötila: {lampotila} °C\n"
-    
+    raportti += "-----------------------------------------------------\n"
     return raportti
 
+def kuukausiraportti(taulukko: list) -> str:
+    """
+    Pyytää käyttäjältä kuukauden numerona, laskee sen perusteella parametrina annetusta taulukosta
+    kulutukset ja tuotot yhteensä sekä keskilämpötilojen keskiarvon. Lasketut tiedot palautetaan tulostettavana
+    tekstinä.
+    
+    Parametrit:
+     taulukko (list): tuotanto/kulutusdata eli lista, jonka jokainen alkio on lista.
+
+    Palauttaa:
+     (str): laskettu yhteenveto raporttimuodossa.
+    """
+    # Sanakirja kuukausista
+    kuukausi = {
+        1: "Tammikuu",
+        2: "Helmikuu",
+        3: "Maaliskuu",
+        4: "Huhtikuu",
+        5: "Toukokuu",
+        6: "Kesäkuu",
+        7: "Heinäkuu",
+        8: "Elokuu",
+        9: "Syyskuu",
+        10: "Lokakuu",
+        11: "Marraskuu",
+        12: "Joulukuu"
+    }
+    syote_ok = False
+    while not syote_ok:
+        syote = input("Anna kuukausi numerona (1-12): ")
+        try:
+            syote = int(syote)
+        except:
+            print(f"Tuo ei ollut numero, yritä uudestaan")
+        else:
+            if syote >= 1 and syote <= 12:
+                syote_ok = True
+            else:
+                print(f"Kuukausi pitäisi olla numero väliltä 1-12 !")
+    kulutus = 0
+    tuotanto = 0
+    lampotila = 0
+    paivalaskuri = 0
+    for rivi in taulukko:
+        if rivi[0].month == syote:
+            kulutus += rivi[1]
+            tuotanto += rivi[2]
+            lampotila += rivi[3]
+            paivalaskuri += 1
+    kulutus = f"{kulutus:.2f}".replace(".", ",")
+    tuotanto = f"{tuotanto:.2f}".replace(".", ",")
+    lampotila = f"{(lampotila/paivalaskuri):.2}".replace(".", ",")
+    raportti = "-----------------------------------------------------\n"
+    raportti += f"Raportti kuukaudelta: {kuukausi.get(syote)}\n"
+    raportti += f"Sähkön kulutus:  {kulutus} kWh\n"
+    raportti += f"Sähkön tuotanto: {tuotanto} kWh\n"
+    raportti += f"Jakson keskilämpötila: {lampotila} °C\n"
+    raportti += "-----------------------------------------------------\n"
+    return raportti
+
+def vuosiraportti(taulukko: list) -> str:
+    """
+    Laskee parametrina annetusta taulukosta kulutukset ja tuotot yhteensä sekä keskilämpötilojen
+    keskiarvon. Lasketut tiedot palautetaan tulostettavana tekstinä.
+    
+    Parametrit:
+     taulukko (list): tuotanto/kulutusdata eli lista, jonka jokainen alkio on lista.
+
+    Palauttaa:
+     (str): laskettu yhteenveto raporttimuodossa.
+    """
+    kulutus = 0
+    tuotanto = 0
+    lampotila = 0
+    paivalaskuri = 0
+    for rivi in taulukko:
+        kulutus += rivi[1]
+        tuotanto += rivi[2]
+        lampotila += rivi[3]
+        paivalaskuri += 1
+    kulutus = f"{kulutus:.2f}".replace(".", ",")
+    tuotanto = f"{tuotanto:.2f}".replace(".", ",")
+    lampotila = f"{(lampotila/paivalaskuri):.2}".replace(".", ",")
+    raportti = "-----------------------------------------------------\n"
+    raportti += f"Raportti vuodelta {taulukko[0][0].year}\n"
+    raportti += f"Sähkön kulutus:  {kulutus} kWh\n"
+    raportti += f"Sähkön tuotanto: {tuotanto} kWh\n"
+    raportti += f"Jakson keskilämpötila: {lampotila} °C\n"
+    raportti += "-----------------------------------------------------\n"
+    return raportti
 
 def main():
     """
@@ -152,26 +242,41 @@ def main():
     """
     # Luetaan ensin csv-tiedosto ja taulukoidaan data
     data = pilko_ja_muunna(lue_csv("2025.csv"))
+    # Alustetaan raportti
+    raportti = ""
     # Siirrytään ohjelmasilmukkaan
     while True:
+        # Aloitetaan valikosta 1
         valinta = nayta_valikko(1)
         if valinta == 1:
-            print(paivakohtainen_raportti(data))
+            # Raportti käyttäjän antamalta päivämääräväliltä
+            raportti = paivakohtainen_raportti(data)
+            print(raportti)
         elif valinta == 2:
-            print(f"Rapsa 2")
+            # Raportti käyttäjän valitsemalta kuukaudelta
+            raportti = kuukausiraportti(data)
+            print(raportti)
         elif valinta == 3:
-            print(f"Rapsa 3")
+            # Raportti koko datasta/vuodelta
+            raportti = vuosiraportti(data)
+            print(raportti)
         elif valinta == 4:    
+            # Ohjelman lopetus
             break
-        print(f"Valikko 2")
+        # Raportti näytetty, siirrytään valikkoon 2
         valinta = nayta_valikko(2)
         if valinta == 1:
-            print(f"Raportti kirjoitettu tiedostoon\n Takaisin alkuun")
+            # Raportin tallennus tekstitiedostoon ja paluu alkuun
+            with open("raportti.txt", "w", encoding="utf-8") as f:
+                f.write(raportti)
+            print(f"Raportti kirjoitettu tiedostoon\nPalataan alkuun")
             continue
         elif valinta == 2:
+            # Paluu valikkoon 1
             print(f"Takaisin alkuun")
             continue
         elif valinta == 3:   
+            # Ohjelman lopetus
             break
 
 if __name__ == "__main__":
