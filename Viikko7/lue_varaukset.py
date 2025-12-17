@@ -5,7 +5,22 @@
 # provided that the original copyright notice is retained.
 #
 # See LICENSE file in the project root for full license information.
+"""
+Modified by Juha Jouppi
 
+Muutin lista-listan listaksi sanakirjoja, suosituksen mukaisesti.
+Taisin siinä aikaisemmassa viikon 4 palautuksessa jo viitata siihen, että 
+indeksien plärääminen on aavistuksen työlästä. No, tässä refaktoroinnissa
+ei vielä päässyt nauttimaan täysin tästä uuden käsittelytavan tuomasta
+helpotuksesta, kun edelleen piti plärätä, että mikä indeksi vastaa mitäkin,
+kun vanhaa toteutusta muutti paikallaan uudeksi. Mutta jos tästä 
+kehittäisi yhä eteenpäin uusien yhteenvetojen merkeissä, niin onhan nuo 
+nimet hiukan helpompi oppia muistamaan.
+
+Seuraava pythonilla toteutettava taulukko/tietokanta-harjoitus
+saa kyllä alkaa sanoilla "import pandas as pd"... Melkein jo 5-6 tehtävät
+alkoi siihen suuntaan kallistua, kun ei sitä erikseen kielletty ;)
+"""
 from datetime import datetime
 
 def muunna_varaustiedot(varaus: list) -> dict:
@@ -58,8 +73,8 @@ def varausten_vahvistusstatus(varaukset: list):
 def varausten_lkm(varaukset: list):
     vahvistetutVaraukset = 0
     eiVahvistetutVaraukset = 0
-    for varaus in varaukset[1:]:
-        if(varaus[8]):
+    for varaus in varaukset:
+        if(varaus['vahvistettu']):
             vahvistetutVaraukset += 1
         else:
             eiVahvistetutVaraukset += 1
@@ -70,9 +85,9 @@ def varausten_lkm(varaukset: list):
 
 def varausten_kokonaistulot(varaukset: list):
     varaustenTulot = 0
-    for varaus in varaukset[1:]:
-        if(varaus[8]):
-            varaustenTulot += varaus[6]*varaus[7]
+    for varaus in varaukset:
+        if(varaus['vahvistettu']):
+            varaustenTulot += varaus['kesto']*varaus['hinta']
 
     print("Vahvistettujen varausten kokonaistulot:", f"{varaustenTulot:.2f}".replace('.', ','), "€")
     print()
@@ -86,9 +101,9 @@ def main():
     print("3) Varausten vahvistusstatus")
     varausten_vahvistusstatus(varaukset)
     print("4) Yhteenveto vahvistuksista")
-    #varausten_lkm(varaukset)
+    varausten_lkm(varaukset)
     print("5) Vahvistettujen varausten kokonaistulot")
-    #varausten_kokonaistulot(varaukset)
+    varausten_kokonaistulot(varaukset)
 
 if __name__ == "__main__":
     main()
